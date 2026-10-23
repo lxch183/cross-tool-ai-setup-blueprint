@@ -4,6 +4,27 @@
 
 **本目录是造底座的图纸，不是底座本身。** 初始化后，实际使用的是 `~/.ai-global/` 和各工具生成的配置；日常工作不依赖本目录。
 
+**仓库地址**：<https://gitee.com/lxch183/cross-tool-ai-setup-blueprint>
+
+```bash
+# HTTPS
+git clone https://gitee.com/lxch183/cross-tool-ai-setup-blueprint.git
+# SSH
+git clone git@gitee.com:lxch183/cross-tool-ai-setup-blueprint.git
+```
+
+## 新机器快速开始
+
+1. 克隆仓库：`git clone https://gitee.com/lxch183/cross-tool-ai-setup-blueprint.git`
+2. 在克隆目录启动任意 AI 工具，让它读取 `INIT.md`，说「**按这个初始化**」
+3. AI 会问你两件事：
+   - 有哪些**项目**（名称、别名、代码路径）
+   - 用哪些 **AI 工具**（默认 4 个，可补充）
+4. AI 按图纸搭建 `~/.ai-global/` 共享目录、各工具指针和权限配置，然后验证
+5. 验证通过即完成初始化，本目录可归档
+
+> 初始化是一次性动作：完成后本目录不再参与日常工作，各工具通过指针读取 `~/.ai-global/`。后续新增项目或工具走「增量接入」，不需要重新克隆、也不需要重新初始化。
+
 ## 解决什么问题
 
 | 痛点 | 初始化后建立的机制 |
@@ -21,16 +42,6 @@
 - 想把散落各处的 skill/规则**收拢**到跨工具共享目录
 - 为团队提供一致的 AI 工作环境搭建流程
 
-## 首次初始化（3 步）
-
-1. 把本目录交给任意 AI，让它读取 `INIT.md`，说「**按这个初始化**」
-2. AI 会问你两件事：
-   - 有哪些**项目**（名称、别名、代码路径）
-   - 用哪些 **AI 工具**（默认 4 个，可补充）
-3. AI 按图纸搭建 `~/.ai-global/` 共享目录、各工具指针和权限配置，然后验证
-
-> 一次性使用：初始化完成后，本目录不再参与日常工作；可归档，留作下一台电脑的搭建或迁移参考。
-
 ## 搭建结果
 
 - `~/.ai-global/`：共享 skill、规则、独立辅助脚本和项目专属配置。
@@ -46,6 +57,7 @@ cross-tool-ai-setup-blueprint/
 ├── ARCHITECTURE.md            ← 搭建结果的架构图 + 目录树 + 链路说明
 ├── PERMISSIONS.md             ← 初始化时的各工具权限配置指南
 ├── ai-tools-registry.json     ← AI 工具注册表（默认 4 个，可扩展）
+├── LICENSE                    ← MIT 许可证
 └── templates/                 ← 各文件的模板
     ├── BOOTSTRAP.template.md
     ├── registry.template.json
@@ -98,3 +110,7 @@ ai-tools-registry.json 和 PERMISSIONS.md。
 ```
 
 换成其他工具时，替换工具名称即可。完整接入包括 **入口指针、工具登记、权限适配**；只在注册表加一条或只生成指针，不算接入完成。
+
+## 许可
+
+本项目以 [MIT License](LICENSE) 发布，可自由使用、修改与再分发，保留版权声明与许可声明即可。
