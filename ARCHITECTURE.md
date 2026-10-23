@@ -9,10 +9,10 @@
 ```mermaid
 graph TB
     subgraph 会话层["任意目录开会话"]
-        U[用户提问「查线下UPP的消费券」]
+        U[用户提问「查订单服务的日志」]
     end
 
-    subgraph 指针层["指针层（借各工具原生规则机制，强注入）"]
+    subgraph 指针层["指针层（由实际客户端的原生机制加载）"]
         G1[Qoder ~/.qoder/rules/always-on.md]
         G2[Claude ~/.claude/CLAUDE.md]
         G3[Codex ~/.codex/AGENTS.md]
@@ -38,7 +38,7 @@ graph TB
     S --> PC
 ```
 
-**核心思想**：各 AI 工具的原生规则目录互不兼容（设计时默认用户只用一个工具），所以**在工具之上加一层适配**——每个工具只放一个"指针"（符合它自己的格式），真正的 skill/规则/配置统一放在工具无关的 `~/.ai-global/`。
+**核心思想**：各 AI 工具的规则位置与加载机制并不相同，因此为实际客户端适配入口；每个工具只放一个"指针"，共享 skill/规则/配置集中维护。入口位置与生效范围需要按客户端确认，文字引用本身不授予文件或执行权限。
 
 ## 二、搭建后的目录结构
 
@@ -50,11 +50,9 @@ graph TB
 ├── PERMISSIONS.md                 ← 本机权限适配方法，后续同步不依赖图纸
 ├── rules/                         ← 通用规则
 ├── scripts/                       ← 通用独立辅助脚本
-├── skills/                        ← 通用 skill（框架，改一处全生效）
-│   ├── log-query/                 ← 日志入口
-│   ├── beacon-log-query/          ← 日志后端
-│   ├── stg-db-query/              ← 查库框架
-│   ├── yunxiao-release/           ← 发版框架
+├── skills/                        ← 通用 skill（共享一份，后续读取生效）
+│   ├── log-query/                 ← 日志查询技能示例
+│   ├── release-workflow/          ← 发版流程技能示例
 │   └── ...                        ← 其他通用 skill
 └── projects/                      ← 项目专属（框架/配置分离）
     └── <项目>/
@@ -63,11 +61,13 @@ graph TB
         └── config/                ← 项目专属配置（索引/数据源/应用参数）
 ```
 
+上面的技能名称仅用于示意；本仓库提供搭建说明与模板，不附带这些业务技能。已有项目和脚本不因权限配置而迁移，技能整理按用户单独确认的计划进行。
+
 ## 三、生成的指针体系（两层）
 
 | 层 | 位置 | 内容 | 生效范围 |
 |---|---|---|---|
-| **全局指针** | 各工具全局规则文件 | 项目速查表三列 + 通用 skill 清单 + 要求读 BOOTSTRAP.md | 任意目录 |
+| **全局指针** | 各工具全局规则文件 | 项目速查表三列 + 通用 skill 清单 + 要求读 BOOTSTRAP.md | 客户端正确加载全局入口时 |
 | **项目级指针**（可选） | `<项目>/.qoder/rules/ai-global.md`、`AGENTS.md`、`CLAUDE.md` | 本项目专属 skill 清单 | 仅项目目录开会话 |
 
 > 核心依赖是「全局指针 + BOOTSTRAP.md」；项目级指针是可选的便利层。
@@ -75,15 +75,15 @@ graph TB
 ## 四、初始化后的核心链路（读 skill）
 
 ```
-用户：「查线下UPP的消费券」
-  ↓ ① 项目语义匹配（速查表三列，强注入）
-  线下UPP → /Users/xxx/UPP → projects/upp/
+用户：「查订单服务的日志」
+  ↓ ① 项目语义匹配（入口加载后读取速查表）
+  订单服务 → ~/work/order-service → projects/order-service/
   ↓ ② 读 BOOTSTRAP.md 完整清单
-  线下UPP 有 gov-coupon-investigation（政府消费券排查）
+  找到通用日志技能及订单服务的项目配置
   ↓ ③ 触发词匹配（读 SKILL.md 的 description）
   命中 → 读全文执行
   ↓ ④ 按需调通用框架 + 项目 config
-  log-query（读项目索引）+ stg-db-query（读项目数据源）
+  log-query（读 projects/order-service/config/log-query.md）
 ```
 
 ## 五、访问与执行权限
