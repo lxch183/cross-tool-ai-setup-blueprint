@@ -1,0 +1,8 @@
+{
+  "ai_tools": [
+    { "name": "Qoder", "pointer": "~/.qoder/rules/always-on.md", "needs_frontmatter": true, "permission": "CLI: ~/.qoder/settings.json 的目录与工具权限；IDE/插件按实际客户端适配" },
+    { "name": "Claude Code", "pointer": "~/.claude/CLAUDE.md", "needs_frontmatter": false, "permission": "~/.claude/settings.json 的 permissions.additionalDirectories 与 Read/Edit/Bash 规则" },
+    { "name": "Codex", "pointer": "~/.codex/AGENTS.md", "needs_frontmatter": false, "permission": "~/.codex/config.toml 的 writable_roots + ~/.codex/rules/ai-shared.rules 的脚本执行规则" },
+    { "name": "GitHub Copilot", "pointer": "~/.github/copilot-instructions.md", "needs_frontmatter": false, "permission": "按 CLI / VS Code / JetBrains 分别配置目录访问、文件写入与终端脚本执行权限" }
+  ]
+}
